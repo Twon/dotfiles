@@ -6,12 +6,18 @@ if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$folders = @($scriptPath, (Join-Path $scriptPath "os\windows"))
+$rootPath = Split-Path -Parent $scriptPath
+$folders = @($rootPath, (Join-Path $rootPath "os\windows"))
 $destinationFolder = $HOME
 
 foreach ($folder in $folders) {
   foreach ($file in (Get-ChildItem $folder)) {
     $target = Join-Path $destinationFolder $file.Name
+    if ($file.Attributes -band [System.IO.FileAttributes]::Directory) {
+      Write-Host "Skipping directory $($file.Name)."
+      continue
+    }
+
     if (Test-Path $target) {
       Write-Host "Symbolic link '$($file.Name)' already exists in the destination folder."
     } else {
