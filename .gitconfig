@@ -1,13 +1,14 @@
 [user]
-	email = ant.peacock@gmail.com
-	name = Antony Peacock
+    email = ant.peacock@gmail.com
+    name = Antony Peacock
 
 [alias]
-	br = branch -vv
-	ci = commit
-	co = checkout
-	df = diff
-	st = status
-	unstage = reset HEAD --
-	upmaster = fetch origin master:master
-	upstream = !git push -u origin HEAD
+    br = branch -vv
+    ci = commit
+    co = checkout
+    df = diff
+    st = status
+    unstage = reset HEAD --
+    upmaster = fetch origin master:master
+    upstream = !git push -u origin HEAD
+    last = log -1 HEAD
