@@ -1,4 +1,23 @@
-$sourceFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
-$destinationFolder = "$env:userprofile"
+# Check if the script is running as administrator
+if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    # Relaunch the script as an administrator
+    Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
+    exit
+}
 
-Copy-Item $sourceFolder\* $destinationFolder -Recurse -Confirm
+$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+$folders = @($scriptPath, (Join-Path $scriptPath "os\windows"))
+$destinationFolder = $HOME
+
+foreach ($folder in $folders) {
+  foreach ($file in (Get-ChildItem $folder)) {
+    $target = Join-Path $destinationFolder $file.Name
+    if (Test-Path $target) {
+      Write-Host "Symbolic link '$($file.Name)' already exists in the destination folder."
+    } else {
+      $fileLink = Join-Path $folder $file.Name
+      New-Item -ItemType SymbolicLink -Path $target -Target $fileLink
+      Write-Host "Created symbolic link for $($file.Name) in the root of the destination folder."
+    }
+  }
+}
