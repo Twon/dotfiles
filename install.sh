@@ -6,6 +6,7 @@ files = "
 .lldbinit
 .gitconfig
 .profile
+.vimrc
 "
 
 for file in $files
